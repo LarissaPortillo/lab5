@@ -7,6 +7,12 @@ d3.csv("https://cdn.glitch.com/53c237f9-1754-427d-899a-6c561b761a18%2Fcoffee-hou
   const width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
   
+ const svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  
  
   
   
