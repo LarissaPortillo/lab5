@@ -17,10 +17,15 @@ d3.csv("https://cdn.glitch.com/53c237f9-1754-427d-899a-6c561b761a18%2Fcoffee-hou
  console.log(company);
   
  const xScale = d3.scaleBand()
+  //.domain(d3.range(company.length))
   .domain(company)
   .rangeRound([0, width])
   .paddingInner(0.1);
-  
+
+const yScale = d3.scaleLinear()
+    .domain(d3.extent(data, (d)=>{return d.LifeExpectancy;}))
+    .range([height,0])
+    .clamp(true);
           
   
 })
