@@ -34,6 +34,23 @@ const yScale = d3.scaleLinear()
     .domain([0,maxRev])
     .range([height,0])
     .clamp(true);
+  
+const xAxis = d3.axisBottom()
+    //.ticks(5,"s")
+    .scale(xScale);
+    
+const yAxis = d3.axisLeft()
+	.scale(yScale);
           
+svg.selectAll('rect')
+  .data(data)
+  .enter()
+  .append('rect')
+  .attr("x",(d,i)=> {return xScale(i);})
+  .attr("y",10)
+  .attr("width",xScale.bandwidth())
+  .attr("height",(d)=>d.revenue);
+
+  
   
 })
