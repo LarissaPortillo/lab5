@@ -63,5 +63,14 @@ svg.append("g")
 svg.append("g")
   .attr("class", "axis y-axis")
   .call(yAxis);
+  
+svg.append('text')
+  .attr("class","title")
+  .attr('x', 20 )
+  .attr('y', 0 )
+  .attr('text-anchor','end')
+  .attr('font-family','sans-serif')
+  .attr('font-size',12)
+  .text("Stores");
    
 })
