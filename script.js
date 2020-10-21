@@ -47,10 +47,62 @@ svg.selectAll('rect')
   .enter()
   .append('rect')
   .attr("x",(d,i)=> {return xScale(i);})
-  .attr("y",10)
-  .attr("width",xScale.bandwidth())
-  .attr("height",(d)=>d.revenue);
+  .attr("y",(d,i)=>{return yScale(i);})
+  .attr("width",xScale.bandwidth((d)=>d.revenue))
+  .attr("height",6);
 
   
-  
+  // CHART INIT ------------------------------
+
+let type=
+// create svg with margin convention
+  const svg = d3.select(".chart")
+	.append("svg")
+
+// create scales without domains
+const xScale = d3.scaleBand() 
+const yScale = ...
+
+// create axes and axis title containers
+
+
+svg.append('g')
+	.attr('class', 'axis y-axis')
+
+svg.append('g')
+  .attr('class', 'axis x-axis')
+	...
+
+svg.append("text")
+  .attr("class", "y-axis-title")
+	...
+
+// (Later) Define update parameters: measure type, sorting direction
+
+// CHART UPDATE FUNCTION -------------------
+function update(data){
+	// update domains
+    xScale.domain(...)
+    yScale.domain(...)
+
+	// update bars
+    const bars = svg.selectAll('.bar')
+    .data(data);
+    
+  // Implement the enter-update-exist sequence
+
+	// update axes and axis title
+
+}
+
+// CHART UPDATES ---------------------------
+
+// Loading data
+d3.csv(...).then(data => {
+	update(data); // simply call the update function with the supplied data
+});
+
+// (Later) Handling the type change
+
+// (Later) Handling the sorting direction change
 })
