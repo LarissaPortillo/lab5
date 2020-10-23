@@ -7,12 +7,27 @@
     <!-- import the webpage's d3 -->
     <script defer src="https://d3js.org/d3.v6.min.js"></script>
 
-        
+    
     <!-- import the webpage's javascript file -->
     <script defer src="/script.js" ></script>
-  </head>  
-  <div class="container">
     
+    <!-- Milligram CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
+    
+
+  </head> 
+  <h1>Coffee House Chains</h1>
+  <p>A ranking of selected leading coffee house chains worldwide</p>
+  <label for="group-by">Group By</label>
+      <select id="group-by">
+        <option value="stores">Stores worldwide</option>
+        <option value="revenue">Revenue in billion U.S. dollars</option>
+      </select> 
+  <button id="button">Sort</button>
+  <div class="container">
+      <div class="chart"></div>
+      <div class="bar"></div>
+      
   </div>
   <body>
     

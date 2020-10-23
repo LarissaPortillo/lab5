@@ -1,76 +1,152 @@
-d3.csv("https://cdn.glitch.com/53c237f9-1754-427d-899a-6c561b761a18%2Fcoffee-house-chains.csv?v=1602833142227", d3.autoType)
-   .then(data=>{
-  data=data;
-  console.log(data);
-  
+
+
+// CHART INIT ------------------------------
+
+
+let type= d3.select("#group-by").node().value;
+
+
+
+// create svg with margin convention
   const margin = {top: 20, right: 10, bottom: 20, left: 40};
   const width = 650 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
   
- const svg = d3.select("body").append("svg")
+  const svg = d3.select(".bar").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   
- const company=data.map(d=>d.company);
- console.log(company);
-  
- const maxRev = d3.max(data, (d)=>{return d.revenue;});
- console.log('maxRev',maxRev);
-  
- const maxStore = d3.max(data, (d)=>{return d.stores;});
- console.log('maxStore',maxStore);
-  
+
+// create scales without domains
  const xScale = d3.scaleBand()
-  .domain(data.map((d)=>d.company))
   .rangeRound([0, width])
   .paddingInner(0.1);
-
+  
 const xxScale = d3.scaleBand()
-  .domain(d3.range(company.length))
   .rangeRound([0, width])
+  .paddingInner(0.1);
   
-  
-//add an if for maxRev or maxStore
 const yScale = d3.scaleLinear()
-    .domain([0,maxStore])
-    .range([height,0])
-    .clamp(true);
+    .range([height,0]);
           
-svg.selectAll('rect')
-  .data(data)
-  .enter()
-  .append('rect')
-  .attr("fill", 'blue')
 
-  .attr("x", (d,i)=>{return xxScale(i);})
-  .attr("y", (d)=> yScale(d.stores))
-  .attr("width", xScale.bandwidth())
-  .attr("height", (d)=> {return height-yScale(d.stores);});
-
-const xAxis = d3.axisBottom()
-  .scale(xScale);
-  
-const yAxis = d3.axisLeft()
-  .scale(yScale);
+// create axes and axis title containers
+svg.append("g")
+  .attr("class", "x-axis")
+  .attr("transform", `translate(0, ${height})`);
+ 
   
 svg.append("g")
-  .attr("class", "axis x-axis")
-  .attr("transform", `translate(0, ${height})`)
-  .call(xAxis);
-  
-svg.append("g")
-  .attr("class", "axis y-axis")
-  .call(yAxis);
-  
+  .attr("class", "y-axis");
+
+
 svg.append('text')
-  .attr("class","title")
-  .attr('x', 20 )
-  .attr('y', 0 )
-  .attr('text-anchor','end')
-  .attr('font-family','sans-serif')
-  .attr('font-size',12)
-  .text("Stores");
+  .attr("class","y-axis-title");
+
+
+
+// (Later) Define update parameters: measure type, sorting direction
+
+// CHART UPDATE FUNCTION -------------------
+function update(data,type){
+    console.log("type", type);
+    
+
+      const company=data.map(d=>d.company);
+      console.log(data.map(d=>d[type]));
+  
+    // Update scale domains
+      xScale.domain(company);
+      
+      xxScale.domain(d3.range(company.length));
+  
+     yScale.domain([0,d3.max(data, (d)=>{return d[type];})]);
+  
+      
+    const bars = svg.selectAll('.bar')
+      .data(data);
+
+      bars.enter()
+      .append('rect')
+      .attr("class","bar")
+      .attr("x", (d,i)=>{return xxScale(i);})
+      .attr("y", (d)=> yScale(d[type]))
+      .merge(bars)
+      .transition()
+      .duration(1000)
+      .attr("fill", ()=> {if (type=="stores"){
+        return "blue";}
+        else{return "green";}})
+      .attr("x", (d,i)=>{return xxScale(i);})
+      .attr("y", (d)=> yScale(d[type]))
+      .attr("width", xScale.bandwidth())
+      .attr("height", (d)=> {return height-yScale(d[type]);});
+      
+  
+      bars.exit()
+      .transition()
+      .duration(1000)
+      .attr("fill","green")
+      .attr("opacity",0.0)
+      .attr("x", (d,i)=>{return xxScale(i);})
+      .attr('y',0)
+      .attr("height",height-yScale(0))
+      .remove();
+
+
+
+    
+      // Update axes and axis title
+      const xAxis = d3.axisBottom(xScale);
+
+      const yAxis = d3.axisLeft(yScale);
+    
+      svg.select(".x-axis")
+      .transition()
+      .duration(1000)
+      .call(xAxis);
+  
+      svg.select(".y-axis")
+      .transition()
+      .duration(1000)
+      .call(yAxis);
+  
+      svg.select(".y-axis-title")
+      .attr("class","y-axis-title")
+      .attr('x', 20 )
+      .attr('y', 0 )
+      .attr('text-anchor','end')
+      .attr('font-family','sans-serif')
+      .attr('font-size',12)
+      .text(type);
+ 
    
-})
+};
+
+
+
+// CHART UPDATES ---------------------------
+
+
+// Loading data
+d3.csv("https://cdn.glitch.com/53c237f9-1754-427d-899a-6c561b761a18%2Fcoffee-house-chains.csv?v=1602833142227", d3.autoType).then(data => {
+  
+  update(data.sort((a,b) => b[type]- a[type]),type);
+  
+  document.querySelector("#group-by").addEventListener('change', (event)=> {
+    type= event.target.value;
+  
+   document.querySelector("#button").onclick=()=>update(data.sort((a,b) => a[type]- b[type]),type);
+   update(data.sort((a,b) => b[type]- a[type]),type);
+  });
+ 
+
+
+});
+
+
+
+
+  
